@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   robots: "index, follow",
   icons: {
     icon: [
-      { url: "/logo.png?v=5", type: "image/png", sizes: "any" },
+      { url: "/logo.png?v=6", type: "image/png", sizes: "any" },
     ],
     shortcut: [
-      { url: "/logo.png?v=5", type: "image/png" },
+      { url: "/logo.png?v=6", type: "image/png" },
     ],
     apple: [
-      { url: "/logo.png?v=5", type: "image/png" },
+      { url: "/logo.png?v=6", type: "image/png" },
     ],
   },
   openGraph: {
@@ -57,9 +57,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon-new.png?v=4" type="image/png" />
-        <link rel="shortcut icon" href="/favicon-new.png?v=4" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon-new.png?v=4" />
+        <link rel="icon" href="/logo.png?v=6" type="image/png" />
+        <link rel="shortcut icon" href="/logo.png?v=6" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png?v=6" />
         <link rel="canonical" href="https://lumezza.com" />
       </head>
       <body>
