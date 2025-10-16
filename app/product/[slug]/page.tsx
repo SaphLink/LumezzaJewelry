@@ -202,21 +202,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         
         {/* Header with Logo and Back Button */}
         <header className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto mb-4">
-            <ol className="flex items-center space-x-2 text-sm" style={{ color: 'var(--color-charcoal)' }}>
-              <li>
-                <Link href="/" className="hover:underline opacity-70 hover:opacity-100">
-                  Home
-                </Link>
-              </li>
-              <li className="opacity-50">/</li>
-              <li className="opacity-70">
-                {product ? product.Title.substring(0, 50) + (product.Title.length > 50 ? '...' : '') : 'Product'}
-              </li>
-            </ol>
-          </nav>
-          
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
             <Link href="/" className="inline-flex items-center glass-effect rounded-2xl hover:scale-105 transition-all duration-300 luxury-shadow border-gradient group" style={{ color: 'var(--color-charcoal)', backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '8px 24px', margin: '20px 0 20px 20px' }}>
               <div className="glass-effect rounded-full p-2 transition-all duration-300 group-hover:rotate-180" style={{ backgroundColor: 'var(--color-gold)', marginRight: '12px' }}>
