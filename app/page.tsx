@@ -62,15 +62,16 @@ export default async function Home() {
         <div className="relative w-full flex flex-col md:flex-row items-center md:justify-center px-4 sm:px-6 md:px-8" style={{ gap: '0' }}>
           {/* Mobile/Tablet: Logo above text, Desktop: Logo to the left */}
           <div className="flex justify-center w-full md:w-auto">
-            <Image 
-              src="/logo.png" 
-              alt="Lumezza Jewelry - Elevated Jewelry, Normalized Pricing" 
-              width={220} 
-              height={88} 
-              className="flex-shrink-0 w-40 sm:w-48 h-auto md:w-56 lg:w-64"
-              style={{ marginBottom: '-16px', marginRight: '-30px' }}
-              priority
-            />
+            <div className="md:mr-[-30px]" style={{ marginBottom: '-16px' }}>
+              <Image 
+                src="/logo.png" 
+                alt="Lumezza Jewelry - Elevated Jewelry, Normalized Pricing" 
+                width={220} 
+                height={88} 
+                className="flex-shrink-0 w-40 sm:w-48 h-auto md:w-56 lg:w-64"
+                priority
+              />
+            </div>
           </div>
           <div className="text-center md:text-left md:ml-[-80px]">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-shadow leading-tight">

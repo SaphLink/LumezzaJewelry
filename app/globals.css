@@ -244,13 +244,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Force logo centering on mobile by removing right margin */
-@media (max-width: 767px) {
-  img[alt*="Lumezza Jewelry - Elevated"] {
-    margin-right: 0 !important;
-  }
-}
-
 .animated-background {
   background: linear-gradient(-45deg, var(--background), var(--color-sand), var(--color-blush), var(--color-sage));
   background-size: 400% 400%;
