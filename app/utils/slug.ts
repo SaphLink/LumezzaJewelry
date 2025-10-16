@@ -19,3 +19,5 @@ export function findProductBySlug(products: Product[], slug: string) {
 export function findProductById(products: Product[], id: number) {
   return products.find(product => product["ID #:"] === id);
 }
+
+
