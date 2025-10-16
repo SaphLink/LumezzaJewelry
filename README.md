@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💎 Lumezza Jewelry
 
-## Getting Started
+**Elevated Jewelry, Normalized Pricing.**
 
-First, run the development server:
+A modern, SEO-optimized e-commerce website for luxury jewelry built with Next.js 15 and Tailwind CSS.
+
+## 🌟 Features
+
+- ✨ Fully responsive design (mobile, tablet, desktop)
+- 🔍 100% SEO-optimized with structured data
+- ⚡ Lightning-fast performance with Next.js 15
+- 🎨 Elegant, luxury design with custom animations
+- 📱 Mobile-first approach
+- 🖼️ Optimized images with lazy loading
+- 📊 Dynamic product pages with SEO-friendly URLs
+- 🗺️ Auto-generated sitemap and robots.txt
+- 📧 Contact form integration via Formspree
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ installed
+- npm or yarn package manager
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+lumezza-website/
+├── app/
+│   ├── layout.tsx          # Root layout with SEO metadata
+│   ├── page.tsx             # Homepage
+│   ├── globals.css          # Global styles
+│   ├── types.ts             # TypeScript types
+│   ├── sitemap.ts           # Auto-generated sitemap
+│   ├── robots.ts            # Robots.txt configuration
+│   ├── utils/
+│   │   └── slug.ts          # SEO-friendly URL generation
+│   └── product/
+│       └── [slug]/
+│           └── page.tsx     # Dynamic product pages
+├── public/
+│   ├── products/            # Product images
+│   ├── products.json        # Product data
+│   ├── logo.png             # Company logo
+│   └── favicon-new.png      # Favicon
+└── package.json
+```
 
-## Learn More
+## 🔧 Configuration
 
-To learn more about Next.js, take a look at the following resources:
+### Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env.local` file:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_BASE_URL=https://your-domain.com
+```
 
-## Deploy on Vercel
+## 📦 Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deploy to Vercel (Recommended)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to GitHub
+2. Import your repository in Vercel
+3. Add environment variable: `NEXT_PUBLIC_BASE_URL`
+4. Deploy!
+
+See [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) for detailed instructions.
+
+## 🎨 Technologies
+
+- **Framework**: Next.js 15.5
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Image Optimization**: Next.js Image component
+- **Fonts**: Google Fonts (Playfair Display, Source Sans Pro)
+- **Forms**: Formspree
+- **Hosting**: Vercel
+
+## 📊 SEO Features
+
+- Meta tags (title, description, keywords)
+- Open Graph tags for social media
+- Twitter Card support
+- JSON-LD structured data (Product, Organization, Breadcrumbs)
+- SEO-friendly URLs with keyword-rich slugs
+- XML sitemap
+- Robots.txt
+- Alt tags on all images
+- Semantic HTML
+- Mobile-first responsive design
+
+## 📝 License
+
+Private - All Rights Reserved © 2025 Lumezza Jewelry
+
+## 📞 Contact
+
+For inquiries: zivwand@gmail.com
