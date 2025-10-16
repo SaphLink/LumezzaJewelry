@@ -67,7 +67,7 @@ export default async function Home() {
               alt="Lumezza Jewelry - Elevated Jewelry, Normalized Pricing" 
               width={220} 
               height={88} 
-              className="flex-shrink-0 w-40 sm:w-48 h-auto md:w-56 lg:w-64 logo-image"
+              className="flex-shrink-0 w-40 sm:w-48 h-auto md:w-56 lg:w-64 md:mr-[-30px]"
               style={{ marginBottom: '-16px' }}
               priority
             />
