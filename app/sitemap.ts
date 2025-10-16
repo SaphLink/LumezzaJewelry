@@ -4,10 +4,8 @@ import { generateSlug } from './utils/slug'
 
 async function getProducts(): Promise<Product[]> {
   try {
-    const products: Product[] = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/products.json`, {
-      cache: 'no-store'
-    }).then(res => res.json());
-    return products;
+    const products = await import('../public/products.json');
+    return products.default as Product[];
   } catch {
     return [];
   }

@@ -4,11 +4,14 @@ import { Product } from './types';
 import { generateSlug } from './utils/slug';
 
 async function getProducts(): Promise<Product[]> {
-  const products: Product[] = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/products.json`, {
-    cache: 'no-store'
-  }).then(res => res.json()).catch(() => []);
-  
-  return products;
+  try {
+    // Use import instead of fetch for better reliability in production
+    const products = await import('../public/products.json');
+    return products.default as Product[];
+  } catch (error) {
+    console.error('Error loading products:', error);
+    return [];
+  }
 }
 
 export default async function Home() {
