@@ -75,28 +75,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
-        <p style={{ color: 'var(--color-charcoal)' }}>Loading...</p>
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
-        <div className="text-center">
-          <h1 className="text-3xl mb-4" style={{ color: 'var(--color-charcoal)' }}>Product not found</h1>
-          <Link href="/" className="underline" style={{ color: 'var(--color-cream)' }}>
-            Return to homepage
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   // Update document title and meta tags dynamically
+  // This MUST be called before any conditional returns to follow Rules of Hooks
   useEffect(() => {
     if (product) {
       document.title = `${product.Title} - $${product.Price.toLocaleString()} | Lumezza Jewelry`;
@@ -136,6 +116,28 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       ogImage.setAttribute('content', `${window.location.origin}/products/${resolvedParams.slug}/image-1.png`);
     }
   }, [product, resolvedParams.slug]);
+
+  // Early returns AFTER all hooks
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
+        <p style={{ color: 'var(--color-charcoal)' }}>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
+        <div className="text-center">
+          <h1 className="text-3xl mb-4" style={{ color: 'var(--color-charcoal)' }}>Product not found</h1>
+          <Link href="/" className="underline" style={{ color: 'var(--color-cream)' }}>
+            Return to homepage
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
