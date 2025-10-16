@@ -8,7 +8,6 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://lumezza-jewelry-git-main-zivwand-gmailcoms-projects.vercel.app'),
   title: "Lumezza Jewelry - Elevated Jewelry, Normalized Pricing",
   description: "Discover exquisite fine jewelry at Lumezza. Elevated craftsmanship, normalized pricing. Shop luxury jewelry with transparent pricing.",
   keywords: "jewelry, fine jewelry, luxury jewelry, gold jewelry, diamond jewelry, affordable luxury, jewelry store, Lumezza",
