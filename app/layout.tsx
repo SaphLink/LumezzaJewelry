@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   robots: "index, follow",
   icons: {
     icon: [
-      { url: "/favicon-new.png?v=4", type: "image/png" },
+      { url: "/logo.png?v=5", type: "image/png", sizes: "any" },
     ],
     shortcut: [
-      { url: "/favicon-new.png?v=4", type: "image/png" },
+      { url: "/logo.png?v=5", type: "image/png" },
     ],
     apple: [
-      { url: "/favicon-new.png?v=4", type: "image/png" },
+      { url: "/logo.png?v=5", type: "image/png" },
     ],
   },
   openGraph: {
