@@ -16,38 +16,84 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => {
-    // Fetch product data
-    fetch('/products.json')
-      .then(res => res.json())
-      .then((products: Product[]) => {
+    const loadData = async () => {
+      try {
+        // Fetch product data
+        const res = await fetch('/products.json');
+        const products = await res.json();
         const foundProduct = findProductBySlug(products, resolvedParams.slug);
-        setProduct(foundProduct || null);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-
-    // Count images
-    const countImages = async () => {
-      let count = 0;
-      for (let i = 1; i <= 20; i++) {
-        try {
-          const response = await fetch(`/products/${resolvedParams.slug}/image-${i}.png`, { method: 'HEAD' });
-          if (response.ok) {
-            count = i;
-          } else {
-            break;
+        
+        if (foundProduct) {
+          setProduct(foundProduct);
+          setLoading(false);
+          
+          // Count images in background without blocking
+          let count = 0;
+          for (let i = 1; i <= 10; i++) {
+            try {
+              const response = await fetch(`/products/${resolvedParams.slug}/image-${i}.png`, { method: 'HEAD' });
+              if (response.ok) {
+                count = i;
+                setImageCount(count); // Update count as we go
+              } else {
+                break;
+              }
+            } catch {
+              break;
+            }
           }
-        } catch {
-          break;
+        } else {
+          setLoading(false);
         }
+      } catch (error) {
+        console.error('Error loading product:', error);
+        setLoading(false);
       }
-      setImageCount(count);
     };
 
-    countImages();
+    loadData();
   }, [resolvedParams.slug]);
+
+  // Update document title and meta tags dynamically - MUST be before conditional returns
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.Title} - $${product.Price.toLocaleString()} | Lumezza Jewelry`;
+      
+      // Update meta description
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
+      
+      // Update Open Graph tags
+      let ogTitle = document.querySelector('meta[property="og:title"]');
+      if (!ogTitle) {
+        ogTitle = document.createElement('meta');
+        ogTitle.setAttribute('property', 'og:title');
+        document.head.appendChild(ogTitle);
+      }
+      ogTitle.setAttribute('content', `${product.Title} - Lumezza Jewelry`);
+      
+      let ogDesc = document.querySelector('meta[property="og:description"]');
+      if (!ogDesc) {
+        ogDesc = document.createElement('meta');
+        ogDesc.setAttribute('property', 'og:description');
+        document.head.appendChild(ogDesc);
+      }
+      ogDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
+      
+      let ogImage = document.querySelector('meta[property="og:image"]');
+      if (!ogImage) {
+        ogImage = document.createElement('meta');
+        ogImage.setAttribute('property', 'og:image');
+        document.head.appendChild(ogImage);
+      }
+      ogImage.setAttribute('content', `${window.location.origin}/products/${resolvedParams.slug}/image-1.png`);
+    }
+  }, [product, resolvedParams.slug]);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % imageCount);
@@ -95,47 +141,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       </div>
     );
   }
-
-  // Update document title and meta tags dynamically
-  useEffect(() => {
-    if (product) {
-      document.title = `${product.Title} - $${product.Price.toLocaleString()} | Lumezza Jewelry`;
-      
-      // Update meta description
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (!metaDesc) {
-        metaDesc = document.createElement('meta');
-        metaDesc.setAttribute('name', 'description');
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
-      
-      // Update Open Graph tags
-      let ogTitle = document.querySelector('meta[property="og:title"]');
-      if (!ogTitle) {
-        ogTitle = document.createElement('meta');
-        ogTitle.setAttribute('property', 'og:title');
-        document.head.appendChild(ogTitle);
-      }
-      ogTitle.setAttribute('content', `${product.Title} - Lumezza Jewelry`);
-      
-      let ogDesc = document.querySelector('meta[property="og:description"]');
-      if (!ogDesc) {
-        ogDesc = document.createElement('meta');
-        ogDesc.setAttribute('property', 'og:description');
-        document.head.appendChild(ogDesc);
-      }
-      ogDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
-      
-      let ogImage = document.querySelector('meta[property="og:image"]');
-      if (!ogImage) {
-        ogImage = document.createElement('meta');
-        ogImage.setAttribute('property', 'og:image');
-        document.head.appendChild(ogImage);
-      }
-      ogImage.setAttribute('content', `${window.location.origin}/products/${resolvedParams.slug}/image-1.png`);
-    }
-  }, [product, resolvedParams.slug]);
 
   return (
     <>
