@@ -244,6 +244,20 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Desktop/iPad: logo margin for side-by-side layout */
+@media (min-width: 768px) {
+  .logo-image {
+    margin-right: -30px !important;
+  }
+}
+
+/* iPhone 12/14 only - center logo by removing right margin */
+@media (max-width: 767px) {
+  .logo-image {
+    margin-right: 0 !important;
+  }
+}
+
 .animated-background {
   background: linear-gradient(-45deg, var(--background), var(--color-sand), var(--color-blush), var(--color-sage));
   background-size: 400% 400%;
