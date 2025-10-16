@@ -19,6 +19,32 @@ async function getProducts(): Promise<Product[]> {
 
 export default async function Home() {
   const products = await getProducts();
+  
+  // Define the custom order mapping from your spreadsheet
+  const orderMapping: { [key: number]: number } = {
+    1: 10,   // 18K White Gold Diamond Cluster Ring
+    2: 3,    // 14K Solid Gold Horse Brooch Pin
+    3: 11,   // 14K Solid Gold "Krystal" Name Pendant
+    4: 12,   // 14K Solid Gold "Melissa" Name Pendant
+    5: 2,    // 10K Solid Gold Masonic Brooch Pin
+    6: 13,   // 14K Solid Gold Lady Pendant
+    7: 14,   // 14K Solid Gold "Suzanne" Name Pendant
+    9: 15,   // 18K Solid Gold "Patricia" Name Pendant
+    10: 4,   // 10K Solid Gold Pendant Smoky Topaz
+    11: 1,   // 14K Solid Gold Poodle Brooch
+    12: 5,   // 14K White Gold Turquoise Bead Bracelet
+    13: 6,   // 14K Solid Gold U.S. Military Eagle Insignia Pendant
+    14: 7,   // 14K Solid Gold Harley-Davidson Logo Pendant
+    15: 8,   // 14K Gold Heart Pendant with Pearl
+    16: 9,   // Jade Buddha Pendant
+  };
+  
+  // Sort products according to the custom order
+  const sortedProducts = products.sort((a, b) => {
+    const orderA = orderMapping[a["ID #:"]] || 999;
+    const orderB = orderMapping[b["ID #:"]] || 999;
+    return orderA - orderB;
+  });
 
   return (
     <main className="min-h-screen luxury-background">
@@ -62,7 +88,7 @@ export default async function Home() {
       <section className="w-full pb-20 sm:pb-28 md:pb-36 relative" style={{ paddingTop: '40px' }}>
         <div className="w-full flex flex-col items-center px-16 md:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full max-w-xs sm:max-w-3xl lg:max-w-4xl">
-                 {products.map((product) => {
+                 {sortedProducts.map((product) => {
                    const productSlug = generateSlug(product.Title);
                    return (
                      <Link 
