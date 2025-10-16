@@ -1,11 +1,15 @@
 import { MetadataRoute } from 'next'
 import { Product } from './types'
 import { generateSlug } from './utils/slug'
+import fs from 'fs'
+import path from 'path'
 
 async function getProducts(): Promise<Product[]> {
   try {
-    const products = await import('../public/products.json');
-    return products.default as Product[];
+    const filePath = path.join(process.cwd(), 'public', 'products.json');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const products: Product[] = JSON.parse(fileContents);
+    return products;
   } catch {
     return [];
   }

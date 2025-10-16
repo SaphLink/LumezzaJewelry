@@ -2,12 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from './types';
 import { generateSlug } from './utils/slug';
+import fs from 'fs';
+import path from 'path';
 
 async function getProducts(): Promise<Product[]> {
   try {
-    // Use import instead of fetch for better reliability in production
-    const products = await import('../public/products.json');
-    return products.default as Product[];
+    const filePath = path.join(process.cwd(), 'public', 'products.json');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const products: Product[] = JSON.parse(fileContents);
+    return products;
   } catch (error) {
     console.error('Error loading products:', error);
     return [];
