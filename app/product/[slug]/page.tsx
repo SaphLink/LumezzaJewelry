@@ -16,123 +16,90 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => {
-    // Fetch product data
-    fetch('/products.json')
-      .then(res => res.json())
-      .then((products: Product[]) => {
-        const foundProduct = findProductBySlug(products, resolvedParams.slug);
-        setProduct(foundProduct || null);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-
-    // Count images
-    const countImages = async () => {
-      let count = 0;
-      for (let i = 1; i <= 20; i++) {
-        try {
-          const response = await fetch(`/products/${resolvedParams.slug}/image-${i}.png`, { method: 'HEAD' });
-          if (response.ok) {
-            count = i;
-          } else {
-            break;
+    const loadProduct = async () => {
+      try {
+        // Fetch products first
+        const response = await fetch('/products.json');
+        const products = await response.json();
+        
+        // Find the product by slug
+        const productData = findProductBySlug(products, resolvedParams.slug);
+        if (productData) {
+          setProduct(productData);
+          // Count images by checking if they exist
+          let count = 0;
+          for (let i = 1; i <= 20; i++) {
+            try {
+              const response = await fetch(`/products/${resolvedParams.slug}/image-${i}.png`, { method: 'HEAD' });
+              if (response.ok) {
+                count = i;
+              } else {
+                break;
+              }
+            } catch {
+              break;
+            }
           }
-        } catch {
-          break;
+          setImageCount(count);
         }
+      } catch (error) {
+        console.error('Error loading product:', error);
+      } finally {
+        setLoading(false);
       }
-      setImageCount(count);
     };
 
-    countImages();
+    loadProduct();
   }, [resolvedParams.slug]);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % imageCount);
+    if (imageCount > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % imageCount);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + imageCount) % imageCount);
+    if (imageCount > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + imageCount) % imageCount);
+    }
   };
 
-  const handleOpenModal = () => {
+  const openModal = () => {
     setIsModalOpen(true);
     setZoomLevel(1);
   };
 
-  const handleCloseModal = () => {
+  const closeModal = () => {
     setIsModalOpen(false);
     setZoomLevel(1);
   };
 
   const zoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 0.25, 3));
+    setZoomLevel(prev => Math.min(prev * 1.2, 3));
   };
 
   const zoomOut = () => {
-    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
+    setZoomLevel(prev => Math.max(prev / 1.2, 0.5));
   };
 
-  // Update document title and meta tags dynamically
-  // This MUST be called before any conditional returns to follow Rules of Hooks
-  useEffect(() => {
-    if (product) {
-      document.title = `${product.Title} - $${product.Price.toLocaleString()} | Lumezza Jewelry`;
-      
-      // Update meta description
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (!metaDesc) {
-        metaDesc = document.createElement('meta');
-        metaDesc.setAttribute('name', 'description');
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
-      
-      // Update Open Graph tags
-      let ogTitle = document.querySelector('meta[property="og:title"]');
-      if (!ogTitle) {
-        ogTitle = document.createElement('meta');
-        ogTitle.setAttribute('property', 'og:title');
-        document.head.appendChild(ogTitle);
-      }
-      ogTitle.setAttribute('content', `${product.Title} - Lumezza Jewelry`);
-      
-      let ogDesc = document.querySelector('meta[property="og:description"]');
-      if (!ogDesc) {
-        ogDesc = document.createElement('meta');
-        ogDesc.setAttribute('property', 'og:description');
-        document.head.appendChild(ogDesc);
-      }
-      ogDesc.setAttribute('content', `${product.Title} - $${product.Price.toLocaleString()}. ${product.Description.substring(0, 160)}...`);
-      
-      let ogImage = document.querySelector('meta[property="og:image"]');
-      if (!ogImage) {
-        ogImage = document.createElement('meta');
-        ogImage.setAttribute('property', 'og:image');
-        document.head.appendChild(ogImage);
-      }
-      ogImage.setAttribute('content', `${window.location.origin}/products/${resolvedParams.slug}/image-1.png`);
-    }
-  }, [product, resolvedParams.slug]);
-
-  // Early returns AFTER all hooks
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
-        <p style={{ color: 'var(--color-charcoal)' }}>Loading...</p>
+      <div className="min-h-screen bg-gradient-to-br from-[var(--color-cream)] via-[var(--color-blush)] to-[var(--color-sand)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-gold)] mx-auto mb-4"></div>
+          <p className="text-[var(--color-charcoal)]">Loading...</p>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>
+      <div className="min-h-screen bg-gradient-to-br from-[var(--color-cream)] via-[var(--color-blush)] to-[var(--color-sand)] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl mb-4" style={{ color: 'var(--color-charcoal)' }}>Product not found</h1>
-          <Link href="/" className="underline" style={{ color: 'var(--color-cream)' }}>
-            Return to homepage
+          <h1 className="text-2xl font-bold text-[var(--color-charcoal)] mb-4">Product Not Found</h1>
+          <Link href="/" className="text-[var(--color-gold)] hover:underline">
+            Return to Home
           </Link>
         </div>
       </div>
@@ -141,316 +108,230 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   return (
     <>
-      {/* JSON-LD Structured Data for Product */}
-      {product && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Product",
-              "name": product.Title,
-              "description": product.Description.substring(0, 200),
-              "image": `${typeof window !== 'undefined' ? window.location.origin : 'https://lumezza.com'}/products/${resolvedParams.slug}/image-1.png`,
-              "brand": {
-                "@type": "Brand",
-                "name": "Lumezza Jewelry"
-              },
-              "offers": {
-                "@type": "Offer",
-                "price": product.Price,
-                "priceCurrency": "USD",
-                "availability": "https://schema.org/InStock",
-                "url": `${typeof window !== 'undefined' ? window.location.href : 'https://lumezza.com/product/' + resolvedParams.slug}`,
-                "seller": {
-                  "@type": "Organization",
-                  "name": "Lumezza Jewelry"
-                }
-              },
-              "category": "Jewelry"
-            })
-          }}
-        />
-      )}
-      <main className="min-h-screen luxury-background" style={{ backgroundColor: 'var(--background)' }}>
-        {/* Breadcrumb Schema */}
-        {product && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": typeof window !== 'undefined' ? window.location.origin : 'https://lumezza.com'
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": product.Title,
-                    "item": typeof window !== 'undefined' ? window.location.href : `https://lumezza.com/product/${resolvedParams.slug}`
-                  }
-                ]
-              })
-            }}
-          />
-        )}
-        
-        {/* Header with Logo and Back Button */}
-        <header className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
-            <Link href="/" className="inline-flex items-center glass-effect rounded-2xl hover:scale-105 transition-all duration-300 luxury-shadow border-gradient group" style={{ color: 'var(--color-charcoal)', backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '8px 24px', margin: '20px 0 20px 20px' }}>
-              <div className="glass-effect rounded-full p-2 transition-all duration-300 group-hover:rotate-180" style={{ backgroundColor: 'var(--color-gold)', marginRight: '12px' }}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-              </div>
-              <span className="font-semibold text-lg">Back to Collection</span>
-            </Link>
-            
-            <Link href="/" className="opacity-80 hover:opacity-100 transition-opacity">
-              <Image 
-                src="/logo.png" 
-                alt="Lumezza Jewelry" 
-                width={80} 
-                height={32} 
-                className="flex-shrink-0 w-16 sm:w-20 md:w-24 h-auto"
-              />
-            </Link>
-          </div>
-        </header>
+      <main className="min-h-screen bg-gradient-to-br from-[var(--color-cream)] via-[var(--color-blush)] to-[var(--color-sand)]">
+        {/* Logo in top right */}
+        <div className="absolute top-4 right-4 z-10">
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Lumezza Jewelry Logo"
+              width={60}
+              height={24}
+              className="hover:opacity-80 transition-opacity"
+            />
+          </Link>
+        </div>
 
-        {/* Product Section */}
-        <section className="py-8 sm:py-12 px-8 sm:px-12 lg:px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
-              
-              {/* Image Slideshow */}
-              <div className="space-y-6">
-                <div 
-                  className="aspect-square relative overflow-hidden rounded-2xl bg-gray-100 cursor-pointer hover:opacity-95 transition-opacity"
-                  onClick={handleOpenModal}
-                >
-                  {imageCount > 0 && (
+            {/* Back Button */}
+            <div className="mb-6 sm:mb-8">
+              <Link 
+                href="/" 
+                className="inline-flex items-center gap-2 text-[var(--color-charcoal)] hover:text-[var(--color-gold)] transition-colors font-medium"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Collection
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* Product Images */}
+              <div className="space-y-4">
+                {/* Main Image */}
+                <div className="relative">
+                  <div 
+                    className="relative w-full h-96 sm:h-[500px] bg-white rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
+                    onClick={openModal}
+                  >
                     <Image
                       src={`/products/${resolvedParams.slug}/image-${currentImageIndex + 1}.png`}
-                      alt={`${product.Title} - Image ${currentImageIndex + 1}`}
+                      alt={product.Title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      priority
                     />
-                  )}
-                  
-                  {/* Hover Overlay with Zoom Icon */}
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
-                    <div className="bg-white/90 rounded-full p-4 shadow-lg">
-                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
+                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                      <div className="opacity-0 hover:opacity-100 transition-opacity">
+                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                  
-                  {/* Navigation Arrows */}
-                  {imageCount > 1 && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          prevImage();
-                        }}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
-                        aria-label="Previous image"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          nextImage();
-                        }}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
-                        aria-label="Next image"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </>
-                  )}
                 </div>
 
-                {/* Thumbnail Gallery */}
+                {/* Thumbnail Navigation */}
                 {imageCount > 1 && (
-                  <div className="flex gap-3 overflow-x-auto">
-                    {Array.from({ length: imageCount }, (_, i) => (
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {Array.from({ length: imageCount }, (_, index) => (
                       <button
-                        key={i}
-                        onClick={() => setCurrentImageIndex(i)}
-                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                          currentImageIndex === i 
-                            ? 'border-[var(--color-gold)]' 
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                          currentImageIndex === index
+                            ? 'border-[var(--color-gold)] shadow-md'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
                         <Image
-                          src={`/products/${resolvedParams.slug}/image-${i + 1}.png`}
-                          alt={`${product.Title} - View ${i + 1}`}
+                          src={`/products/${resolvedParams.slug}/image-${index + 1}.png`}
+                          alt={`${product.Title} ${index + 1}`}
                           width={80}
                           height={80}
-                          className="object-cover w-full h-full"
+                          className="w-full h-full object-cover"
                         />
                       </button>
                     ))}
                   </div>
                 )}
+
+                {/* Navigation Arrows */}
+                {imageCount > 1 && (
+                  <div className="flex justify-center gap-4">
+                    <button
+                      onClick={prevImage}
+                      className="p-2 rounded-full bg-white/80 hover:bg-white shadow-md hover:shadow-lg transition-all"
+                    >
+                      <svg className="w-6 h-6 text-[var(--color-charcoal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="p-2 rounded-full bg-white/80 hover:bg-white shadow-md hover:shadow-lg transition-all"
+                    >
+                      <svg className="w-6 h-6 text-[var(--color-charcoal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Product Info */}
-              <div className="space-y-6 sm:space-y-8 product-info-mobile" style={{ marginTop: '20px sm:30px' }}>
-                {/* Title & Price */}
+              {/* Product Details */}
+              <div className="space-y-6">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-light mb-3 sm:mb-4 product-title-mobile" style={{ color: 'var(--color-charcoal)' }}>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-charcoal)] mb-4">
                     {product.Title}
                   </h1>
-                  <p className="text-3xl sm:text-4xl font-bold product-price-mobile" style={{ color: '#b8860b', textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom: '24px' }}>
-                    ${product.Price.toLocaleString()}
-                  </p>
-                </div>
-                
-                {/* Description */}
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 product-description-heading-mobile" style={{ color: '#b8860b', textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)' }}>
-                    Product Description
-                  </h2>
-                  <div 
-                    className="whitespace-pre-line leading-relaxed text-base sm:text-lg lg:text-xl font-medium product-description-text-mobile"
-                    style={{ color: 'var(--color-charcoal)', textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}
-                    dangerouslySetInnerHTML={{
-                      __html: product.Description
-                        .replace(/^Details:/gm, '<h3 style="color: #b8860b; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); font-size: 1.25rem; font-weight: 600; margin-bottom: -2.5rem;">Product Details:</h3>')
-                        .replace(/(?<=Product Details:[\s\S]*?)([A-Z][^:]+:[^\n]*(?:\n(?!\n)[^A-Z][^\n]*)*)/gm, '<div style="margin-bottom: -0.5rem; line-height: 1.2; text-indent: -1.2em; padding-left: 1.2em;">• $1</div>')
-                        .replace(/(?<=Product Details:[\s\S]*?)(This [^.]*\.)/gm, '<div style="margin-top: -3rem;">$1</div>')
-                    }}
-                  >
+                  <div className="text-2xl sm:text-3xl font-bold text-[var(--color-gold)] mb-6">
+                    ${product.Price}
                   </div>
+                </div>
+
+                {/* Product Description */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold text-[var(--color-charcoal)]">Product Description</h2>
+                  <div 
+                    className="text-[var(--color-charcoal)] leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: product.Description }}
+                  />
+                </div>
+
+
+                {/* Contact Form */}
+                <div className="mt-12 pt-8 border-t border-gray-200">
+                  <h2 className="text-2xl font-bold text-[var(--color-charcoal)] mb-6">
+                    <span className="text-[var(--color-gold)]">Contact Us About</span> This Piece!
+                  </h2>
+                  
+                  <form 
+                    action="https://formspree.io/f/xpwgkqgk" 
+                    method="POST"
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name"
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
+                        style={{ 
+                          backgroundColor: 'white',
+                          textAlign: 'center',
+                        }}
+                        required
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Your Email"
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
+                        style={{ 
+                          backgroundColor: 'white',
+                          textAlign: 'center',
+                        }}
+                        required
+                      />
+                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="Your Phone Number"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
+                      style={{ 
+                        backgroundColor: 'white',
+                        textAlign: 'center',
+                      }}
+                    />
+                    <textarea
+                      name="message"
+                      placeholder="Your Message"
+                      rows={4}
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg resize-none"
+                      style={{ 
+                        backgroundColor: 'white',
+                        textAlign: 'left',
+                      }}
+                      defaultValue={`I am reaching out in regards to the product, ${product.Title}.
+ 
+My name is `}
+                      required
+                    ></textarea>
+                    <input type="hidden" name="_to" value="zivwand@gmail.com" />
+                    <input type="hidden" name="_subject" value={`Lumezza Jewelry Inquiry - ${product.Title}`} />
+                    <button
+                      type="submit"
+                      className="w-full bg-[var(--color-gold)] hover:bg-[var(--color-gold)]/90 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-xl transition-colors text-base sm:text-lg"
+                    >
+                      Send Message
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-
-        {/* Contact Section */}
-        <section className="relative overflow-hidden py-12 sm:py-16 md:py-20" style={{ backgroundColor: 'var(--background)', marginTop: '84px' }}>
-          {/* Elegant background pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: `radial-gradient(circle at 25% 25%, var(--color-gold) 2px, transparent 2px),
-                               radial-gradient(circle at 75% 75%, var(--color-cream) 1px, transparent 1px)`,
-              backgroundSize: '60px 60px, 40px 40px'
-            }}></div>
-          </div>
-          
-          <div className="relative w-full flex flex-col items-center px-4 sm:px-6 md:px-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-shadow text-center" style={{ marginBottom: '16px sm:20px' }}>
-              <span style={{ color: '#b8860b' }}>Contact Us About </span>
-              <span style={{ color: 'var(--color-charcoal)' }}>This Piece!</span>
-            </h2>
-            
-            <form 
-              action="https://formspree.io/f/xpzqkqkp" 
-              method="POST" 
-              className="w-full max-w-sm sm:max-w-md md:max-w-xl space-y-6 sm:space-y-8"
-            >
-              <input 
-                type="text" 
-                name="name"
-                placeholder="Your Name" 
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
-                style={{ 
-                  backgroundColor: 'white',
-                  textAlign: 'center',
-                }}
-                required
-              />
-              <input 
-                type="email" 
-                name="email"
-                placeholder="Your E-Mail" 
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
-                style={{ 
-                  backgroundColor: 'white',
-                  textAlign: 'center',
-                }}
-                required
-              />
-              <input 
-                type="tel" 
-                name="phone"
-                placeholder="Your Phone Number" 
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg"
-                style={{ 
-                  backgroundColor: 'white',
-                  textAlign: 'center',
-                }}
-              />
-              <textarea 
-                name="message"
-                placeholder="Your Message" 
-                rows={4}
-                className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-[var(--color-gold)] text-base sm:text-lg resize-none"
-                style={{ 
-                  backgroundColor: 'left',
-                  textAlign: 'left',
-                }}
-                defaultValue={`I am reaching out in regards to the product, ${product.Title}.
- 
-My name is `}
-                required
-              ></textarea>
-              <input type="hidden" name="_to" value="zivwand@gmail.com" />
-              <input type="hidden" name="_subject" value={`Lumezza Jewelry Inquiry - ${product.Title}`} />
-              <button 
-                type="submit"
-                className="w-full py-4 rounded-xl text-white font-semibold text-lg shadow-lg"
-                style={{ backgroundColor: 'var(--color-charcoal)' }}
-              >
-                Send Message
-              </button>
-            </form>
-          </div>
-        </section>
+        </div>
 
         {/* Footer */}
-        <footer className="pb-8 sm:pb-12 border-t border-gray-200/50" style={{ paddingTop: '64px' }}>
-          <div className="w-full flex flex-col items-center px-4 sm:px-6 md:px-8">
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <Image 
-                src="/logo.png" 
-                alt="Lumezza Jewelry" 
-                width={120} 
-                height={48} 
-                className="opacity-80 w-20 sm:w-24 md:w-28 lg:w-32 h-auto"
+        <footer className="bg-[var(--color-charcoal)] text-white py-8 sm:py-12">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+              <Image
+                src="/logo.png"
+                alt="Lumezza Jewelry Logo"
+                width={120}
+                height={48}
+                className="opacity-90"
               />
-              <p className="text-xs sm:text-sm opacity-70 text-center sm:text-left" style={{ color: 'var(--color-charcoal)' }}>
+              <p className="text-sm sm:text-base opacity-70">
                 © 2025 Lumezza Jewelry. All Rights Reserved.
               </p>
             </div>
           </div>
         </footer>
 
-        {/* Zoom Modal */}
+        {/* Image Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={handleCloseModal}>
-            <div className="relative max-w-4xl max-h-full overflow-auto" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+            onClick={closeModal}
+          >
+            <div className="relative max-w-4xl max-h-full w-full h-full flex items-center justify-center">
               <button
-                onClick={handleCloseModal}
+                onClick={closeModal}
                 className="absolute top-4 right-4 z-10 bg-white/20 hover:bg-white/30 rounded-full p-2 text-white transition-all"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -458,10 +339,10 @@ My name is `}
                 </svg>
               </button>
               
-              <div className="flex items-center justify-center mb-4">
+              <div className="flex items-center gap-4">
                 <button
                   onClick={zoomOut}
-                  className="bg-white/20 hover:bg-white/30 rounded-full p-2 text-white transition-all mr-2"
+                  className="bg-white/20 hover:bg-white/30 rounded-full p-2 text-white transition-all"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />

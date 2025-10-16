@@ -8,6 +8,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://lumezza-jewelry-git-main-zivwand-gmailcoms-projects.vercel.app'),
   title: "Lumezza Jewelry - Elevated Jewelry, Normalized Pricing",
   description: "Discover exquisite fine jewelry at Lumezza. Elevated craftsmanship, normalized pricing. Shop luxury jewelry with transparent pricing.",
   keywords: "jewelry, fine jewelry, luxury jewelry, gold jewelry, diamond jewelry, affordable luxury, jewelry store, Lumezza",
@@ -56,41 +57,38 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-             <head>
-               <link rel="preconnect" href="https://fonts.googleapis.com" />
-               <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-               <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600&display=swap" rel="stylesheet" />
-               <link rel="icon" href="/favicon-new.png?v=4" type="image/png" />
-               <link rel="shortcut icon" href="/favicon-new.png?v=4" type="image/png" />
-               <link rel="apple-touch-icon" href="/favicon-new.png?v=4" />
-               <link rel="canonical" href="https://lumezza.com" />
-             </head>
-        <body>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "JewelryStore",
-                "name": "Lumezza Jewelry",
-                "description": "Elevated Jewelry, Normalized Pricing. Discover exquisite fine jewelry with transparent pricing.",
-                "url": "https://lumezza.com",
-                "logo": "https://lumezza.com/logo.png",
-                "sameAs": [],
-                "contactPoint": {
-                  "@type": "ContactPoint",
-                  "contactType": "customer service",
-                  "email": "zivwand@gmail.com"
-                },
-                "address": {
-                  "@type": "PostalAddress",
-                  "addressCountry": "US"
-                }
-              })
-            }}
-          />
-          {children}
-        </body>
+      <head>
+        <link rel="icon" href="/favicon-new.png?v=4" type="image/png" />
+        <link rel="shortcut icon" href="/favicon-new.png?v=4" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon-new.png?v=4" />
+        <link rel="canonical" href="https://lumezza.com" />
+      </head>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "JewelryStore",
+              "name": "Lumezza Jewelry",
+              "description": "Elevated Jewelry, Normalized Pricing. Discover exquisite fine jewelry with transparent pricing.",
+              "url": "https://lumezza.com",
+              "logo": "https://lumezza.com/logo.png",
+              "sameAs": [],
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "email": "zivwand@gmail.com"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "US"
+              }
+            })
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
