@@ -376,7 +376,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 style={{ 
                   backgroundColor: 'white',
                   textAlign: 'center',
-                  '::placeholder': { textAlign: 'center' }
                 }}
                 required
               />
@@ -388,7 +387,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 style={{ 
                   backgroundColor: 'white',
                   textAlign: 'center',
-                  '::placeholder': { textAlign: 'center' }
                 }}
                 required
               />
@@ -400,7 +398,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 style={{ 
                   backgroundColor: 'white',
                   textAlign: 'center',
-                  '::placeholder': { textAlign: 'center' }
                 }}
               />
               <textarea 
@@ -411,7 +408,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 style={{ 
                   backgroundColor: 'left',
                   textAlign: 'left',
-                  '::placeholder': { textAlign: 'left' }
                 }}
                 defaultValue={`I am reaching out in regards to the product, ${product.Title}.
  

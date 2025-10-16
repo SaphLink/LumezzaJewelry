@@ -137,7 +137,6 @@ export default async function Home() {
                      style={{ 
                        backgroundColor: 'white',
                        textAlign: 'center',
-                       '::placeholder': { textAlign: 'center' }
                      }}
                      required
                    />
@@ -149,7 +148,6 @@ export default async function Home() {
                      style={{ 
                        backgroundColor: 'white',
                        textAlign: 'center',
-                       '::placeholder': { textAlign: 'center' }
                      }}
                      required
                    />
@@ -161,7 +159,6 @@ export default async function Home() {
                      style={{ 
                        backgroundColor: 'white',
                        textAlign: 'center',
-                       '::placeholder': { textAlign: 'center' }
                      }}
                    />
                    <textarea 
@@ -172,7 +169,6 @@ export default async function Home() {
                      style={{ 
                        backgroundColor: 'white',
                        textAlign: 'center',
-                       '::placeholder': { textAlign: 'center' }
                      }}
                      required
                    ></textarea>

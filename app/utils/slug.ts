@@ -1,3 +1,5 @@
+import { Product } from '../types';
+
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()
@@ -7,13 +9,13 @@ export function generateSlug(title: string): string {
     .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
 }
 
-export function findProductBySlug(products: any[], slug: string) {
+export function findProductBySlug(products: Product[], slug: string) {
   return products.find(product => {
     const productSlug = generateSlug(product.Title);
     return productSlug === slug;
   });
 }
 
-export function findProductById(products: any[], id: number) {
+export function findProductById(products: Product[], id: number) {
   return products.find(product => product["ID #:"] === id);
 }
